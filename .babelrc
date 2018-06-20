@@ -1,0 +1,20 @@
+{
+  "presets": [
+    [
+			"env",
+      {
+        "modules": false,
+        "useBuiltIns": "usage"
+      }
+    ],
+    "react",
+		"es2015",
+    "jest"
+  ],
+  "env": {
+    "test": {
+      "presets": ["es2015", "react"],
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  }
+}
