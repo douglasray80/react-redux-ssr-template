@@ -1,25 +1,24 @@
 import React from 'react'
+import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-const styles = {
-	container: {
-		width: '100%',
-		background: 'blue'
-	}
-}
+const Div = styled.div`
+	width: 100%;
+  background: #d3d3d3;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+`
 
-const Header = ({ loggedIn }) => (
-  <div style={styles.container}>
+const Header = () => (
+  <Div>
     <Link to='/'>Home</Link>
     <Link to='/about'>About</Link>
     <Link to='/contact'>Contact</Link>
-    {loggedIn && <Link to='/secret'>Secret</Link>}
-  </div>
+  </Div>
 )
 
-const mapStateToProps = state => ({
-  loggedIn: state.loggedIn,
-})
-
-export default connect(mapStateToProps)(Header)
+export default Header

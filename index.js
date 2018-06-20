@@ -7,6 +7,7 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter, matchPath } from 'react-router-dom'
 import { Provider as ReduxProvider } from 'react-redux'
 import Helmet from 'react-helmet'
+import { ServerStyleSheet } from 'styled-components'
 import routes from './src/routes'
 import Layout from './src/components/Layout'
 import createStore, { initializeSession } from './src/store'
@@ -18,6 +19,7 @@ app.use(express.static(path.resolve(__dirname, '../public')))
 app.get('/*', (req, res) => {
   const context = {}
   const store = createStore()
+	const sheet = new ServerStyleSheet()
 
   store.dispatch(initializeSession())
 
@@ -36,16 +38,17 @@ app.get('/*', (req, res) => {
         </StaticRouter>
       </ReduxProvider>
     )
-    const reactDom = renderToString(jsx)
+    const reactDom = renderToString(sheet.collectStyles(jsx))
     const reduxState = store.getState()
     const helmetData = Helmet.renderStatic()
+		const styles = sheet.getStyleTags()
 
     res.writeHead(200, {'Content-Type': 'text/html'})
-    res.end(htmlTemplate(reactDom, reduxState, helmetData))
+    res.end(htmlTemplate(reactDom, reduxState, helmetData, styles))
   })
 })
 
-function htmlTemplate(reactDom, reduxState, helmetData) {
+function htmlTemplate(reactDom, reduxState, helmetData, styles) {
 	return `
 		<!DOCTYPE html>
 		<html>
@@ -67,13 +70,12 @@ function htmlTemplate(reactDom, reduxState, helmetData) {
 				${helmetData.title.toString()}
 				${helmetData.meta.toString()}
 
+				${styles}
 			</head>
 
 			<body>
 				<div id='app'>${reactDom}</div>
-				<script>
-					window.REDUX_DATA = ${JSON.stringify(reduxState)}
-				</script>
+				<script>window.REDUX_DATA = ${JSON.stringify(reduxState)}</script>
 				<script src='./bundle.js'></script>
 			</body>
 		</html>
