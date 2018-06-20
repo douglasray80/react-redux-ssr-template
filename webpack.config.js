@@ -2,8 +2,11 @@ const dev = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const plugins = [
+	new CleanWebpackPlugin(['public']),
   new FriendlyErrorsWebpackPlugin(),
 ]
 
@@ -18,7 +21,16 @@ if (!dev) {
 module.exports = {
   mode: dev ? 'development' : 'production',
   context: path.join(__dirname, 'src'),
-  devtool: dev ? 'none' : 'source-map',
+  // devtool: dev ? 'none' : 'source-map',
+	optimization: {
+		minimizer: [
+			new UglifyJsPlugin({
+				cache: true,
+				parallel: true,
+				sourceMap: true
+			})
+		]
+	},
   entry: {
     app: './client.js',
   },
