@@ -8,8 +8,8 @@
     ],
     "rewrites": [
       {
-				"source": "**",
-				"function": "ssrapp"
+        "source": "**",
+        "function": "ssrapp"
       }
     ]
   }
